@@ -5,32 +5,23 @@ import android.os.Bundle;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
-import android.app.*;
 import android.content.*;
 import android.net.*;
-import android.util.Base64;
 import android.util.Log;
 import android.view.*;
 import android.graphics.*;
 import android.widget.*;
 import android.provider.*;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
-import com.microsoft.projectoxford.face.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,25 +30,19 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
     private final int PICK_IMAGE = 1;
-    private ProgressDialog detectionProgressDialog;
 
     // private fields for the Microsoft Face API
     private static final String subscriptionKey = "b9a0a727d32a4f6d8e19c2271ecb9856";
     private static final String url = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceId=false&returnFaceLandmarks=false&returnFaceAttributes=emotion";
     private static String TAG = "LAB";
-    private static final String imageWithFaces =
-            "https://thenypost.files.wordpress.com/2016/05/north_korea_the_real_kim.jpg?quality=90&strip=all&w=443";
 
-
-    private final FaceServiceClient faceServiceClient =
-            new FaceServiceRestClient(url, subscriptionKey);
-
-    private static String outputEmotion = "";
+    public String outputEmotion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Button button1 = findViewById(R.id.button1);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
                         intent, "Select Picture"), PICK_IMAGE);
             }
         });
-        detectionProgressDialog = new ProgressDialog(this);
     }
 
     @Override
@@ -85,80 +69,20 @@ public class MainActivity extends AppCompatActivity {
 
                 GET(bitmap);
 
-                //***********************************************************************************************************************************************************
-
-                // Comment out for tutorial
-//                GET();
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    //***********************************************************************************************************************************************************
-//    public String getStringImage(Bitmap bmp) {
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//        byte[] imageBytes = baos.toByteArray();
-//        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-//        return encodedImage;
-//    }
-//
-//
-//    private void SendImage(final String image) {
-//        final StringRequest stringRequest = new StringRequest(Request.Method.POST, "URL",
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        Log.d("uploade", response);
-//                        try {
-//                            JSONObject jsonObject = new JSONObject(response);
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                    }
-//                },
-//                new Response.ErrorListener() {
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Log.e(TAG, error.toString());
-//
-//                    }
-//                }) {
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//
-//                Map<String, String> params = new Hashtable<String, String>();
-//
-//                params.put("image", image);
-//                return params;
-//            }
-//        };
-//        {
-//            int socketTimeout = 30000;
-//            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-//            stringRequest.setRetryPolicy(policy);
-//            RequestQueue requestQueue = Volley.newRequestQueue(this);
-//            requestQueue.add(stringRequest);
-//        }
-//    }
-    //***********************************************************************************************************************************************************
-
     void GET(final Bitmap bitmap) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(this);
-            //Creating a json field for the Request body
-//            JSONObject jsonBody = new JSONObject();
-//            jsonBody.put("url", imageWithFaces);
-//            final String mRequestBody = jsonBody.toString();
 
             JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
                     (Request.Method.POST, url, null, new Response.Listener<JSONArray>() {
                         @Override
                         //This is what we are getting back as a JSON
-                        //TODO need to parse the object to get the emotions and figure out the highest emotion and store it
                         public void onResponse(final JSONArray response) {
                             try {
 
@@ -166,8 +90,6 @@ public class MainActivity extends AppCompatActivity {
                                 for (int i = 0; i < response.length(); i++) {
                                     //In this loop, you will parse all the array elements inside list array
                                     JSONObject listObj1 = new JSONObject(response.get(i).toString());
-//                                    String FA = listObj1.getString("faceAttributes");
-//                                    Log.e("FA", FA);
                                     JSONObject lisItems = listObj1.getJSONObject("faceAttributes");
                                     Log.e("faceAttributes", lisItems.toString());
                                     JSONObject next = lisItems.getJSONObject("emotion");
@@ -183,6 +105,10 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     String maxKey = maxEntry.getKey();  // Might NPE if map is empty.
                                     outputEmotion = maxKey;
+
+                                    TextView textView1 = findViewById(R.id.textView1);
+                                    textView1.setText(outputEmotion);
+
                                     Log.e(TAG, maxKey);
 
                                 }
@@ -218,12 +144,6 @@ public class MainActivity extends AppCompatActivity {
                     return params;
                 }
 
-//                @Override
-//                //don't worry about it
-//                public String getBodyContentType() {
-//                    return "application/octet-stream; charset=utf-8";
-//                }
-
                 @Override
                 //this is the request body that has the url of the image, don't worry about it
                 public byte[] getBody() {
@@ -232,11 +152,10 @@ public class MainActivity extends AppCompatActivity {
             };
             //adds everything to the requestQueue
             requestQueue.add(jsonObjectRequest);
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
     public static byte[] encodeTobase64(Bitmap image) {
         Bitmap immagex = image;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
