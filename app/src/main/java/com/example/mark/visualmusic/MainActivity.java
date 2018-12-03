@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        GET();
         Button button1 = findViewById(R.id.button1);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,9 +150,9 @@ public class MainActivity extends AppCompatActivity {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             //Creating a json field for the Request body
-            JSONObject jsonBody = new JSONObject();
-            jsonBody.put("url", imageWithFaces);
-            final String mRequestBody = jsonBody.toString();
+//            JSONObject jsonBody = new JSONObject();
+//            jsonBody.put("url", imageWithFaces);
+//            final String mRequestBody = jsonBody.toString();
 
             JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
                     (Request.Method.POST, url, null, new Response.Listener<JSONArray>() {
@@ -228,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 //this is the request body that has the url of the image, don't worry about it
                 public byte[] getBody() {
-                    return bitmap;
+                    return encodeTobase64(bitmap);
                 }
             };
             //adds everything to the requestQueue
@@ -236,5 +235,13 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public static byte[] encodeTobase64(Bitmap image) {
+        Bitmap immagex = image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immagex.compress(Bitmap.CompressFormat.PNG, 90, baos);
+        byte[] b = baos.toByteArray();
+        return b;
     }
 }
