@@ -2,40 +2,57 @@ package com.example.mark.visualmusic;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.*;
 import android.content.*;
 import android.net.*;
-import android.os.*;
+import android.util.Log;
 import android.view.*;
 import android.graphics.*;
 import android.widget.*;
 import android.provider.*;
-import com.microsoft.projectoxford.face.*;
-import com.microsoft.projectoxford.face.contract.*;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.microsoft.projectoxford.face.*;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class MainActivity extends AppCompatActivity {
     private final int PICK_IMAGE = 1;
     private ProgressDialog detectionProgressDialog;
 
-    // Replace `<API endpoint>` with the Azure region associated with
-    // your subscription key. For example,
-    // apiEndpoint = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0"
-    private final String apiEndpoint = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0";
+    // private fields for the Microsoft Face API
+    private static final String subscriptionKey = "b9a0a727d32a4f6d8e19c2271ecb9856";
+    private static final String url = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceId=false&returnFaceLandmarks=false&returnFaceAttributes=emotion";
+    private static String TAG = "LAB";
+    private static final String imageWithFaces =
+            "https://thenypost.files.wordpress.com/2016/05/north_korea_the_real_kim.jpg?quality=90&strip=all&w=443";
 
-    // Replace `<Subscription Key>` with your subscription key.
-    // For example, subscriptionKey = "0123456789abcdef0123456789ABCDEF"
-    private final String subscriptionKey = "80f78885ee42486e82f0060622c5bd13";
 
     private final FaceServiceClient faceServiceClient =
-            new FaceServiceRestClient(apiEndpoint, subscriptionKey);
+            new FaceServiceRestClient(url, subscriptionKey);
+
+    private static String outputEmotion = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        GET();
         Button button1 = findViewById(R.id.button1);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
                         intent, "Select Picture"), PICK_IMAGE);
             }
         });
-
         detectionProgressDialog = new ProgressDialog(this);
     }
 
@@ -63,113 +79,107 @@ public class MainActivity extends AppCompatActivity {
                 imageView.setImageBitmap(bitmap);
 
                 // Comment out for tutorial
-                detectAndFrame(bitmap);
+//                GET();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-    // Detect faces by uploading a face image.
-// Frame faces after detection.
-    private void detectAndFrame(final Bitmap imageBitmap) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-        ByteArrayInputStream inputStream =
-                new ByteArrayInputStream(outputStream.toByteArray());
 
-        AsyncTask<InputStream, String, Face[]> detectTask =
-                new AsyncTask<InputStream, String, Face[]>() {
-                    String exceptionMessage = "";
+    void GET() {
+        try {
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            //Creating a json field for the Request body
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("url", imageWithFaces);
+            final String mRequestBody = jsonBody.toString();
 
-                    @Override
-                    protected Face[] doInBackground(InputStream... params) {
-                        try {
-                            publishProgress("Detecting...");
-                            Face[] result = faceServiceClient.detect(
-                                    params[0],
-                                    true,         // returnFaceId
-                                    false,        // returnFaceLandmarks
-                                    null          // returnFaceAttributes:
-                                /* new FaceServiceClient.FaceAttributeType[] {
-                                    FaceServiceClient.FaceAttributeType.Age,
-                                    FaceServiceClient.FaceAttributeType.Gender }
-                                */
-                            );
-                            if (result == null){
-                                publishProgress(
-                                        "Detection Finished. Nothing detected");
-                                return null;
+            JsonArrayRequest jsonObjectRequest = new JsonArrayRequest
+                    (Request.Method.POST, url, null, new Response.Listener<JSONArray>() {
+                        @Override
+                        //This is what we are getting back as a JSON
+                        //TODO need to parse the object to get the emotions and figure out the highest emotion and store it
+                        public void onResponse(final JSONArray response) {
+                            try {
+
+                                Log.e(TAG,response.toString());
+                                for (int i = 0; i < response.length(); i++) {
+                                    //In this loop, you will parse all the array elements inside list array
+                                    JSONObject listObj1 = new JSONObject(response.get(i).toString());
+//                                    String FA = listObj1.getString("faceAttributes");
+//                                    Log.e("FA", FA);
+                                    JSONObject lisItems = listObj1.getJSONObject("faceAttributes");
+                                    Log.e("faceAttributes", lisItems.toString());
+                                    JSONObject next = lisItems.getJSONObject("emotion");
+                                    Log.e("emotion", next.toString());
+
+                                    HashMap<String, Double> map = new Gson().fromJson(next.toString(), HashMap.class);
+
+                                    Map.Entry<String, Double> maxEntry = null;
+                                    for (Map.Entry<String, Double> entry : map.entrySet()) {
+                                        if (maxEntry == null || entry.getValue() > maxEntry.getValue()) {
+                                            maxEntry = entry;
+                                        }
+                                    }
+                                    String maxKey = maxEntry.getKey();  // Might NPE if map is empty.
+                                    outputEmotion = maxKey;
+                                    Log.e(TAG,maxKey);
+
+                                }
+                            } catch (JSONException e) {
+                                Log.e("TAG", "Error " + e.toString());
+                                e.printStackTrace();
                             }
-                            publishProgress(String.format(
-                                    "Detection Finished. %d face(s) detected",
-                                    result.length));
-                            return result;
-                        } catch (Exception e) {
-                            exceptionMessage = String.format(
-                                    "Detection failed: %s", e.getMessage());
-                            return null;
                         }
-                    }
-
-                    @Override
-                    protected void onPreExecute() {
-                        //TODO: show progress dialog
-                        detectionProgressDialog.show();
-                    }
-                    @Override
-                    protected void onProgressUpdate(String... progress) {
-                        //TODO: update progress
-                        detectionProgressDialog.setMessage(progress[0]);
-                    }
-                    @Override
-                    protected void onPostExecute(Face[] result) {
-                        //TODO: update face frames
-                        detectionProgressDialog.dismiss();
-
-                        if(!exceptionMessage.equals("")){
-                            showError(exceptionMessage);
+                    }, new Response.ErrorListener() {
+                        @Override
+                        // if there is an error on getting the json
+                        public void onErrorResponse(final VolleyError error) {
+                            Log.e(TAG, error.toString());
                         }
-                        if (result == null) return;
+                    }) {
+                @Override
+                //This is posting the headers
+                public Map<String, String> getHeaders() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json");
+                    params.put("Ocp-Apim-Subscription-Key", subscriptionKey);
+                    Log.e(TAG, params.toString());
+                    return params;
+                }
 
-                        ImageView imageView = findViewById(R.id.imageView1);
-                        imageView.setImageBitmap(
-                                drawFaceRectanglesOnBitmap(imageBitmap, result));
-                        imageBitmap.recycle();
+                @Override
+                //this is posting the params, we can add more in the faceatrributes if we want to later
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("returnFaceID", "false");
+                    params.put("returnFaceLandmarks", "false");
+                    params.put("returnFaceAttributes", "emotion");
+                    return params;
+                }
+
+                @Override
+                //don't worry about it
+                public String getBodyContentType() {
+                    return "application/json; charset=utf-8";
+                }
+
+                @Override
+                //this is the request body that has the url of the image, don't worry about it
+                public byte[] getBody() {
+                    try {
+                        return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
+                    } catch (UnsupportedEncodingException uee) {
+                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
+                        return null;
                     }
-                };
-
-        detectTask.execute(inputStream);
-    }
-
-    private void showError(String message) {
-        new AlertDialog.Builder(this)
-                .setTitle("Error")
-                .setMessage(message)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                    }})
-                .create().show();
-    }
-    private static Bitmap drawFaceRectanglesOnBitmap(
-            Bitmap originalBitmap, Face[] faces) {
-        Bitmap bitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.RED);
-        paint.setStrokeWidth(10);
-        if (faces != null) {
-            for (Face face : faces) {
-                FaceRectangle faceRectangle = face.faceRectangle;
-                canvas.drawRect(
-                        faceRectangle.left,
-                        faceRectangle.top,
-                        faceRectangle.left + faceRectangle.width,
-                        faceRectangle.top + faceRectangle.height,
-                        paint);
-            }
+                }
+            };
+            //adds everything to the requestQueue
+            requestQueue.add(jsonObjectRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        return bitmap;
     }
 }

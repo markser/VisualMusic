@@ -16,4 +16,5 @@
         android:text="Browse for a face image"
         android:id="@+id/button1"
         android:layout_alignParentBottom="true"/>
+
 </RelativeLayout>
