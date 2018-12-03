@@ -5,23 +5,29 @@ import android.os.Bundle;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import android.app.*;
 import android.content.*;
 import android.net.*;
+import android.util.Base64;
 import android.util.Log;
 import android.view.*;
 import android.graphics.*;
 import android.widget.*;
 import android.provider.*;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.microsoft.projectoxford.face.*;
@@ -78,6 +84,10 @@ public class MainActivity extends AppCompatActivity {
                 ImageView imageView = findViewById(R.id.imageView1);
                 imageView.setImageBitmap(bitmap);
 
+                GET(bitmap);
+
+                //***********************************************************************************************************************************************************
+
                 // Comment out for tutorial
 //                GET();
 
@@ -87,7 +97,57 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    void GET() {
+    //***********************************************************************************************************************************************************
+//    public String getStringImage(Bitmap bmp) {
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//        byte[] imageBytes = baos.toByteArray();
+//        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+//        return encodedImage;
+//    }
+//
+//
+//    private void SendImage(final String image) {
+//        final StringRequest stringRequest = new StringRequest(Request.Method.POST, "URL",
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.d("uploade", response);
+//                        try {
+//                            JSONObject jsonObject = new JSONObject(response);
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Log.e(TAG, error.toString());
+//
+//                    }
+//                }) {
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//
+//                Map<String, String> params = new Hashtable<String, String>();
+//
+//                params.put("image", image);
+//                return params;
+//            }
+//        };
+//        {
+//            int socketTimeout = 30000;
+//            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+//            stringRequest.setRetryPolicy(policy);
+//            RequestQueue requestQueue = Volley.newRequestQueue(this);
+//            requestQueue.add(stringRequest);
+//        }
+//    }
+    //***********************************************************************************************************************************************************
+
+    void GET(final Bitmap bitmap) {
         try {
             RequestQueue requestQueue = Volley.newRequestQueue(this);
             //Creating a json field for the Request body
@@ -103,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onResponse(final JSONArray response) {
                             try {
 
-                                Log.e(TAG,response.toString());
+                                Log.e(TAG, response.toString());
                                 for (int i = 0; i < response.length(); i++) {
                                     //In this loop, you will parse all the array elements inside list array
                                     JSONObject listObj1 = new JSONObject(response.get(i).toString());
@@ -124,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     String maxKey = maxEntry.getKey();  // Might NPE if map is empty.
                                     outputEmotion = maxKey;
-                                    Log.e(TAG,maxKey);
+                                    Log.e(TAG, maxKey);
 
                                 }
                             } catch (JSONException e) {
@@ -143,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 //This is posting the headers
                 public Map<String, String> getHeaders() {
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("Content-Type", "application/json");
+                    params.put("Content-Type", "application/octet-stream");
                     params.put("Ocp-Apim-Subscription-Key", subscriptionKey);
                     Log.e(TAG, params.toString());
                     return params;
@@ -159,21 +219,16 @@ public class MainActivity extends AppCompatActivity {
                     return params;
                 }
 
-                @Override
-                //don't worry about it
-                public String getBodyContentType() {
-                    return "application/json; charset=utf-8";
-                }
+//                @Override
+//                //don't worry about it
+//                public String getBodyContentType() {
+//                    return "application/octet-stream; charset=utf-8";
+//                }
 
                 @Override
                 //this is the request body that has the url of the image, don't worry about it
                 public byte[] getBody() {
-                    try {
-                        return mRequestBody == null ? null : mRequestBody.getBytes("utf-8");
-                    } catch (UnsupportedEncodingException uee) {
-                        VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", mRequestBody, "utf-8");
-                        return null;
-                    }
+                    return bitmap;
                 }
             };
             //adds everything to the requestQueue
