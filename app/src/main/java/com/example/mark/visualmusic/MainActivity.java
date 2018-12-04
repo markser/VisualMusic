@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private final int PICK_IMAGE = 1;
 
     // private fields for the Microsoft Face API
-    private static final String subscriptionKey = "b9a0a727d32a4f6d8e19c2271ecb9856";
+    private static final String subscriptionKey = "82c91dfce85e4e7db215472e55e7200a";
     private static final String url = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceId=false&returnFaceLandmarks=false&returnFaceAttributes=emotion";
     private static String TAG = "LAB";
 
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                                     outputEmotion = maxKey;
 
                                     TextView textView1 = findViewById(R.id.textView1);
-                                    textView1.setText(outputEmotion);
+                                    textView1.setText(maxKey);
 
                                     Log.e(TAG, maxKey);
 
@@ -210,7 +210,8 @@ public class MainActivity extends AppCompatActivity {
     private void connected() {
         // Then we will write some more code here.
         // Play a playlist
-        if (outputEmotion.equals("sad")) {
+        if (outputEmotion.equals("sadness")) {
+            Log.e(TAG,"equals is working as intended");
             mSpotifyAppRemote.getPlayerApi().play("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
         }
     }
