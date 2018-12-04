@@ -26,6 +26,13 @@ import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.spotify.android.appremote.api.ConnectionParams;
+import com.spotify.android.appremote.api.Connector;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
+
+import com.spotify.protocol.client.Subscription;
+import com.spotify.protocol.types.PlayerState;
+import com.spotify.protocol.types.Track;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -35,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String subscriptionKey = "b9a0a727d32a4f6d8e19c2271ecb9856";
     private static final String url = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceId=false&returnFaceLandmarks=false&returnFaceAttributes=emotion";
     private static String TAG = "LAB";
+
+    //Spotify
+    private static final String CLIENT_ID = "9408e3864f4e4137b7942aaec5f1abd7";
+    private static final String REDIRECT_URI = "VisualMusic-login://callback";
+    private SpotifyAppRemote mSpotifyAppRemote;
 
     public String outputEmotion;
 
@@ -163,4 +175,48 @@ public class MainActivity extends AppCompatActivity {
         byte[] b = baos.toByteArray();
         return b;
     }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // We will start writing our code here.
+
+        // Set the connection parameters
+        ConnectionParams connectionParams =
+                new ConnectionParams.Builder(CLIENT_ID)
+                        .setRedirectUri(REDIRECT_URI)
+                        .showAuthView(true)
+                        .build();
+        SpotifyAppRemote.connect(this, connectionParams,
+                new Connector.ConnectionListener() {
+
+                    @Override
+                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                        mSpotifyAppRemote = spotifyAppRemote;
+                        Log.d("MainActivity", "Connected! Yay!");
+
+                        // Now you can start interacting with App Remote
+                        connected();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        Log.e("MainActivity", throwable.getMessage(), throwable);
+
+                        // Something went wrong when attempting to connect! Handle errors here
+                    }
+                });
+    }
+
+    private void connected() {
+        // Then we will write some more code here.
+        // Play a playlist
+        mSpotifyAppRemote.getPlayerApi().play("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SpotifyAppRemote.disconnect(mSpotifyAppRemote);
+    }
+
 }
