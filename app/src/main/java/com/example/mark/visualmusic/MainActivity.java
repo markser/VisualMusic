@@ -212,7 +212,15 @@ public class MainActivity extends AppCompatActivity {
         // Play a playlist
         if (outputEmotion.equals("sadness")) {
             Log.e(TAG,"equals is working as intended");
-            mSpotifyAppRemote.getPlayerApi().play("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
+            mSpotifyAppRemote.getPlayerApi().play("spotify:user:httpblue_:playlist:7po73ySk4MLa832Lqmmyjf");
+        }
+        if (outputEmotion.equals("neutral")) {
+            Log.e(TAG,"equals is working as intended");
+            mSpotifyAppRemote.getPlayerApi().play("spotify:user:httpblue_:playlist:7po73ySk4MLa832Lqmmyjf");
+        }
+        if (outputEmotion.equals("happiness")) {
+            Log.e(TAG,"equals is working as intended");
+            mSpotifyAppRemote.getPlayerApi().play("spotify:user:casey727:playlist:6M4ZbVjkSE6P3IhbeYbnhc");
         }
     }
 
