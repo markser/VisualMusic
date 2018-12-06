@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Spotify
     private static final String CLIENT_ID = "9408e3864f4e4137b7942aaec5f1abd7";
-    private static final String REDIRECT_URI = "VisualMusic-login://callback";
+    private static final String REDIRECT_URI = "testschema://callback";
     private SpotifyAppRemote mSpotifyAppRemote;
 
     public String outputEmotion;
