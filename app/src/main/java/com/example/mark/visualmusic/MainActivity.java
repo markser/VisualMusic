@@ -220,6 +220,22 @@ public class MainActivity extends AppCompatActivity {
         }
         if (outputEmotion.equals("happiness")) {
             Log.e(TAG,"equals is working as intended");
+            mSpotifyAppRemote.getPlayerApi().play("spotify:user:spotify:playlist:37i9dQZF1DX0Yxoavh5qJV");
+        }
+        if (outputEmotion.equals("disgust")) {
+            Log.e(TAG,"equals is working as intended");
+            mSpotifyAppRemote.getPlayerApi().play("spotify:user:casey727:playlist:6M4ZbVjkSE6P3IhbeYbnhc");
+        }
+        if (outputEmotion.equals("fear")) {
+            Log.e(TAG,"equals is working as intended");
+            mSpotifyAppRemote.getPlayerApi().play("spotify:user:casey727:playlist:6M4ZbVjkSE6P3IhbeYbnhc");
+        }
+        if (outputEmotion.equals("surprise")) {
+            Log.e(TAG,"equals is working as intended");
+            mSpotifyAppRemote.getPlayerApi().play("spotify:user:casey727:playlist:6M4ZbVjkSE6P3IhbeYbnhc");
+        }
+        if (outputEmotion.equals("contempt")) {
+            Log.e(TAG,"equals is working as intended");
             mSpotifyAppRemote.getPlayerApi().play("spotify:user:casey727:playlist:6M4ZbVjkSE6P3IhbeYbnhc");
         }
     }
