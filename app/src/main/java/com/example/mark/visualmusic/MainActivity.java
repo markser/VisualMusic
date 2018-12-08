@@ -205,6 +205,7 @@ public class MainActivity extends AppCompatActivity {
                         // Something went wrong when attempting to connect! Handle errors here
                     }
                 });
+
     }
 
     private void connected() {
