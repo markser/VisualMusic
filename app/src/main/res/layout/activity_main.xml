@@ -23,6 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/button1"
         android:layout_centerHorizontal="true"
-        android:text="VisualMusic" />
+        android:text="VisualMusic"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:visibility="visible" />
 
 </RelativeLayout>
