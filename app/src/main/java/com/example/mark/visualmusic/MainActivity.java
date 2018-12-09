@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.setType("image/*");
                 startActivityForResult(Intent.createChooser(
                         intent, "Select Picture"), PICK_IMAGE);
+                onStart();
             }
         });
     }
@@ -80,12 +81,10 @@ public class MainActivity extends AppCompatActivity {
                 imageView.setImageBitmap(bitmap);
 
                 GET(bitmap);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        onStart();
     }
 
     void GET(final Bitmap bitmap) {
