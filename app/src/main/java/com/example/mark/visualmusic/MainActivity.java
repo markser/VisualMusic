@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
                 intent.setType("image/*");
                 startActivityForResult(Intent.createChooser(
                         intent, "Select Picture"), PICK_IMAGE);
-                onStart();
             }
         });
     }
@@ -120,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
 
                                     TextView textView1 = findViewById(R.id.textView1);
                                     textView1.setText(maxKey);
+
+                                    onStart();
 
                                     Log.e(TAG, maxKey);
 
