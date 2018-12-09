@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        onStart();
     }
 
     void GET(final Bitmap bitmap) {
@@ -210,6 +211,10 @@ public class MainActivity extends AppCompatActivity {
     private void connected() {
         // Then we will write some more code here.
         // Play a playlist
+
+        if (outputEmotion == null ) {
+            return;
+        }
         if (outputEmotion.equals("sadness")) {
             Log.e(TAG,"equals is working as intended");
             mSpotifyAppRemote.getPlayerApi().play("spotify:user:httpblue_:playlist:7po73ySk4MLa832Lqmmyjf");
