@@ -9,14 +9,13 @@ This android app takes selfies from your phones gallery and uses Microsoft Face 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Akash** - *Spoity android SDK implementation* 
+* **Mark** - *Microsoft Face Api implementation*
 
-See also the list of [contributors](https://github.com/your/VisualMusic/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/markser/VisualMusic/graphs/contributors) who participated in this project.
 
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* Coffee
 
