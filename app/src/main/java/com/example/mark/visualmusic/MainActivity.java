@@ -6,6 +6,7 @@ import android.os.Bundle;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import android.content.*;
 import android.net.*;
@@ -222,23 +223,23 @@ public class MainActivity extends AppCompatActivity {
         }
         if (outputEmotion.equals("neutral")) {
             Log.e(TAG,"equals is working as intended");
-            mSpotifyAppRemote.getPlayerApi().play("spotify:user:httpblue_:playlist:7po73ySk4MLa832Lqmmyjf");
+            mSpotifyAppRemote.getPlayerApi().play("spotify:user:lexietamilia:playlist:1Dxe2eb5DuqFbUgLxwCgQg");
         }
         if (outputEmotion.equals("happiness")) {
             Log.e(TAG,"equals is working as intended");
-            mSpotifyAppRemote.getPlayerApi().play("spotify:user:spotify:playlist:37i9dQZF1DX0Yxoavh5qJV");
+            mSpotifyAppRemote.getPlayerApi().play("spotify:user:kateyarnell:playlist:22zy9P9kROBoqpgYVUO7o6");
         }
         if (outputEmotion.equals("disgust")) {
             Log.e(TAG,"equals is working as intended");
-            mSpotifyAppRemote.getPlayerApi().play("spotify:user:casey727:playlist:6M4ZbVjkSE6P3IhbeYbnhc");
+            mSpotifyAppRemote.getPlayerApi().play("spotify:user:doc_wigwam:playlist:3drrYgpTEoNKf6qd82sWrw");
         }
         if (outputEmotion.equals("fear")) {
             Log.e(TAG,"equals is working as intended");
-            mSpotifyAppRemote.getPlayerApi().play("spotify:user:casey727:playlist:6M4ZbVjkSE6P3IhbeYbnhc");
+            mSpotifyAppRemote.getPlayerApi().play("spotify:user:spotify:playlist:37i9dQZF1E8KQ0lmhNPjA2");
         }
         if (outputEmotion.equals("surprise")) {
             Log.e(TAG,"equals is working as intended");
-            mSpotifyAppRemote.getPlayerApi().play("spotify:user:casey727:playlist:6M4ZbVjkSE6P3IhbeYbnhc");
+            mSpotifyAppRemote.getPlayerApi().play("spotify:user:spotify:playlist:37i9dQZF1DWSf2RDTDayIx");
         }
         if (outputEmotion.equals("contempt")) {
             Log.e(TAG,"equals is working as intended");
