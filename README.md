@@ -7,7 +7,7 @@ This android app takes selfies from your phones gallery and uses Microsoft Face 
 * [Face API](https://azure.microsoft.com/en-us/services/cognitive-services/face/) - Facial Recongiztion Api used to detect emotions in photos
 * [Spotiy Android SDK](https://developer.spotify.com/documentation/android/) - Spotify Android SDK
 
-## Contributors
+## Authors
 
 * **Akash** - *Spoity android SDK implementation* 
 * **Mark** - *Microsoft Face Api implementation*
