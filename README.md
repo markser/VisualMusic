@@ -14,8 +14,3 @@ This android app takes selfies from your phones gallery and uses Microsoft Face 
 
 See also the list of [contributors](https://github.com/markser/VisualMusic/graphs/contributors) who participated in this project.
 
-
-## Acknowledgments
-
-* Coffee
-
